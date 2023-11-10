@@ -39,6 +39,7 @@ def download_image(image_url, image_path):
     response.raise_for_status()
     with open(image_path, "wb") as file:
         file.write(response.content)
+    file.close()
 
 
 def get_server_upload_url(group_id, access_token, vk_api_version):
@@ -60,6 +61,7 @@ def upload_image_on_server(upload_url, image_path):
             'photo': file
         }
         response = requests.post(upload_url, files=files)
+        file.close()
         response.raise_for_status()
     server, uploaded_photo, photo_hash = response.json().values()
     return server, uploaded_photo, photo_hash
