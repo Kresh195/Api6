@@ -45,14 +45,14 @@ def download_image(image_url, image_path):
 def get_server_upload_url(vk_group_id, vk_access_token, vk_api_version):
     server_upload_url = "https://api.vk.com/method/photos.getWallUploadServer"
     params = {
-        "vk_group_id": vk_group_id,
-        "vk_access_token": vk_access_token,
+        "group_id": vk_group_id,
+        "access_token": vk_access_token,
         "v": vk_api_version
     }
     response = requests.get(server_upload_url, params=params)
     response.raise_for_status()
     server_upload = handle_response(response)
-    return server_upload["response"]
+    return server_upload["response"]["upload_url"]
 
 
 def upload_image_on_server(upload_url, image_path):
@@ -62,7 +62,7 @@ def upload_image_on_server(upload_url, image_path):
         }
         response = requests.post(upload_url, files=files)
         file.close()
-        response.raise_for_status()
+    response.raise_for_status()
     server, uploaded_photo, photo_hash = response.json().values()
     return server, uploaded_photo, photo_hash
 
@@ -70,8 +70,8 @@ def upload_image_on_server(upload_url, image_path):
 def save_image_in_album(vk_group_id, vk_access_token, vk_api_version, uploaded_photo, photo_hash, server):
     vk_save_image_url = "https://api.vk.com/method/photos.saveWallPhoto"
     params = {
-        "vk_group_id": vk_group_id,
-        "vk_access_token": vk_access_token,
+        "group_id": vk_group_id,
+        "access_token": vk_access_token,
         "v": vk_api_version,
         "photo": uploaded_photo,
         "hash": photo_hash,
@@ -87,7 +87,7 @@ def publish_vk_image(vk_group_id, vk_access_token, vk_api_version, image_alt, ow
     vk_publish_url = "https://api.vk.com/method/wall.post"
     params = {
         "owner_id": f"-{vk_group_id}",
-        "vk_access_token": vk_access_token,
+        "access_token": vk_access_token,
         "v": vk_api_version,
         "from_group": 1,
         "message": image_alt,
