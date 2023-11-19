@@ -115,12 +115,13 @@ def main():
         image_alt = comics_json["alt"]
         image_url = comics_json["img"]
         image_name = f"{comics_json['title']}.png"
-        download_image(image_url, image_name)
 
-        server_upload = get_server_upload_url(vk_group_id, vk_access_token, vk_api_version)
-        server_upload_url = server_upload
-        server, uploaded_photo, photo_hash = upload_image_on_server(server_upload_url, image_name)
-        pathlib.Path.unlink(image_name)
+        try:
+            download_image(image_url, image_name)
+            server_upload_url = get_server_upload_url(vk_group_id, vk_access_token, vk_api_version)
+            server, uploaded_photo, photo_hash = upload_image_on_server(server_upload_url, image_name)
+        finally:
+            pathlib.Path.unlink(image_name)
 
         save_in_album_response = save_image_in_album(vk_group_id, vk_access_token, vk_api_version, uploaded_photo, photo_hash, server)
         media_id = save_in_album_response[0]["id"]
