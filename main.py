@@ -42,11 +42,11 @@ def download_image(image_url, image_path):
     file.close()
 
 
-def get_server_upload_url(group_id, access_token, vk_api_version):
+def get_server_upload_url(vk_group_id, vk_access_token, vk_api_version):
     server_upload_url = "https://api.vk.com/method/photos.getWallUploadServer"
     params = {
-        "group_id": group_id,
-        "access_token": access_token,
+        "vk_group_id": vk_group_id,
+        "vk_access_token": vk_access_token,
         "v": vk_api_version
     }
     response = requests.get(server_upload_url, params=params)
@@ -67,11 +67,11 @@ def upload_image_on_server(upload_url, image_path):
     return server, uploaded_photo, photo_hash
 
 
-def save_image_in_album(group_id, access_token, vk_api_version, uploaded_photo, photo_hash, server):
+def save_image_in_album(vk_group_id, vk_access_token, vk_api_version, uploaded_photo, photo_hash, server):
     vk_save_image_url = "https://api.vk.com/method/photos.saveWallPhoto"
     params = {
-        "group_id": group_id,
-        "access_token": access_token,
+        "vk_group_id": vk_group_id,
+        "vk_access_token": vk_access_token,
         "v": vk_api_version,
         "photo": uploaded_photo,
         "hash": photo_hash,
@@ -83,11 +83,11 @@ def save_image_in_album(group_id, access_token, vk_api_version, uploaded_photo, 
     return vk_save_response["response"]
 
 
-def vk_image_publish(group_id, access_token, vk_api_version, image_alt, owner_id, media_id):
+def publish_vk_image(vk_group_id, vk_access_token, vk_api_version, image_alt, owner_id, media_id):
     vk_publish_url = "https://api.vk.com/method/wall.post"
     params = {
-        "owner_id": f"-{group_id}",
-        "access_token": access_token,
+        "owner_id": f"-{vk_group_id}",
+        "vk_access_token": vk_access_token,
         "v": vk_api_version,
         "from_group": 1,
         "message": image_alt,
@@ -102,8 +102,8 @@ def vk_image_publish(group_id, access_token, vk_api_version, image_alt, owner_id
 def main():
     load_dotenv()
 
-    access_token = os.getenv("ACCESS_TOKEN")
-    group_id = os.getenv("GROUP_ID")
+    vk_access_token = os.getenv("VK_ACCESS_TOKEN")
+    vk_group_id = os.getenv("VK_GROUP_ID")
     vk_api_version = "5.154"
     comics_count = get_comics_count()
     publication_frequency = 86400
@@ -117,16 +117,16 @@ def main():
         image_name = f"{comics_json['title']}.png"
         download_image(image_url, image_name)
 
-        server_upload = get_server_upload_url(group_id, access_token, vk_api_version)
-        server_upload_url = server_upload["upload_url"]
+        server_upload = get_server_upload_url(vk_group_id, vk_access_token, vk_api_version)
+        server_upload_url = server_upload
         server, uploaded_photo, photo_hash = upload_image_on_server(server_upload_url, image_name)
         pathlib.Path.unlink(image_name)
 
-        save_in_album_response = save_image_in_album(group_id, access_token, vk_api_version, uploaded_photo, photo_hash, server)
+        save_in_album_response = save_image_in_album(vk_group_id, vk_access_token, vk_api_version, uploaded_photo, photo_hash, server)
         media_id = save_in_album_response[0]["id"]
         owner_id = save_in_album_response[0]["owner_id"]
 
-        vk_image_publish(group_id, access_token, vk_api_version, image_alt, owner_id, media_id)
+        publish_vk_image(vk_group_id, vk_access_token, vk_api_version, image_alt, owner_id, media_id)
         time.sleep(publication_frequency)
 
 
