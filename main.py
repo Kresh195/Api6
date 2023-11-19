@@ -102,8 +102,8 @@ def publish_vk_image(vk_group_id, vk_access_token, vk_api_version, image_alt, ow
 def main():
     load_dotenv()
 
-    vk_access_token = os.getenv("VK_ACCESS_TOKEN")
-    vk_group_id = os.getenv("VK_GROUP_ID")
+    vk_access_token = os.environ["VK_ACCESS_TOKEN"]
+    vk_group_id = os.environ["VK_GROUP_ID"]
     vk_api_version = "5.154"
     comics_count = get_comics_count()
     publication_frequency = 86400
