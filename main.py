@@ -123,9 +123,10 @@ def main():
         finally:
             pathlib.Path.unlink(image_name)
 
-        save_in_album_response = save_image_in_album(vk_group_id, vk_access_token, vk_api_version, uploaded_photo, photo_hash, server)
-        media_id = save_in_album_response[0]["id"]
-        owner_id = save_in_album_response[0]["owner_id"]
+        album_saving_response = save_image_in_album(vk_group_id, vk_access_token, vk_api_version,
+                                                    uploaded_photo, photo_hash, server)
+        media_id = album_saving_response[0]["id"]
+        owner_id = album_saving_response[0]["owner_id"]
 
         publish_vk_image(vk_group_id, vk_access_token, vk_api_version, image_alt, owner_id, media_id)
         time.sleep(publication_frequency)
