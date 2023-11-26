@@ -19,11 +19,11 @@ def get_random_comics_url(comics_count):
     return comics_url
 
 
-def get_comics_json(comics_url):
+def fetch_comics_content(comics_url):
     response = requests.get(comics_url)
     response.raise_for_status()
-    comics_json = response.json()
-    return comics_json
+    fetched_comics_content = response.json()
+    return fetched_comics_content
 
 
 def get_comics_count():
@@ -110,11 +110,11 @@ def main():
 
     while True:
         comics_url = get_random_comics_url(comics_count)
-        comics_json = get_comics_json(comics_url)
+        fetched_comics_content = fetch_comics_content(comics_url)
 
-        image_alt = comics_json["alt"]
-        image_url = comics_json["img"]
-        image_name = f"{comics_json['title']}.png"
+        image_alt = fetched_comics_content["alt"]
+        image_url = fetched_comics_content["img"]
+        image_name = f"{fetched_comics_content['title']}.png"
 
         try:
             download_image(image_url, image_name)
