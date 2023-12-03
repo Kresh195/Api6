@@ -1,7 +1,6 @@
 import requests
 import os
 import random
-import pathlib
 from dotenv import load_dotenv
 import time
 
@@ -120,7 +119,7 @@ def main():
             server_upload_url = get_server_upload_url(vk_group_id, vk_access_token, vk_api_version)
             server, uploaded_photo, photo_hash = upload_image_on_server(server_upload_url, image_name)
         finally:
-            pathlib.Path.unlink(image_name)
+            os.remove(image_name)
 
         album_saving_response = save_image_in_album(vk_group_id, vk_access_token, vk_api_version,
                                                     uploaded_photo, photo_hash, server)
