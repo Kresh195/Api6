@@ -6,10 +6,10 @@ import time
 
 
 def handle_response(response):
-    if "error" in response.json():
-        raise Exception(f"Произошла ошибка VK api: \n{response.json()['error']['error_msg']}")
+    if "error" in response:
+        raise Exception(f"Произошла ошибка VK api: \n{response['error']['error_msg']}")
     else:
-        return response.json()
+        return response
 
 
 def get_random_comics_url(comics_count):
@@ -50,7 +50,7 @@ def get_server_upload_url(vk_group_id, vk_access_token, vk_api_version):
     }
     response = requests.get(server_upload_url, params=params)
     response.raise_for_status()
-    server_upload = handle_response(response)
+    server_upload = handle_response(response.json())
     return server_upload["response"]["upload_url"]
 
 
@@ -77,7 +77,7 @@ def save_image_in_album(vk_group_id, vk_access_token, vk_api_version, uploaded_p
     }
     response = requests.post(vk_save_image_url, params=params)
     response.raise_for_status()
-    vk_save_response = handle_response(response)
+    vk_save_response = handle_response(response.json())
     return vk_save_response["response"]
 
 
@@ -93,7 +93,7 @@ def publish_vk_image(vk_group_id, vk_access_token, vk_api_version, image_alt, ow
     }
     response = requests.post(vk_publish_url, params=params)
     response.raise_for_status()
-    publish_response = handle_response(response)
+    publish_response = handle_response(response.json())
     return publish_response
 
 
